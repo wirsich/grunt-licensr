@@ -30,20 +30,20 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     licensr: {
-      default_options: {
+      without_header: {
         options: {
+          license: 'LICENSE-MIT'
         },
         files: {
-          'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123']
+          'tmp/mit.js': ['test/fixtures/mit.js']
         }
       },
-      custom_options: {
+      with_header: {
         options: {
-          separator: ': ',
-          punctuation: ' !!!'
+          license: 'LICENSE-MIT'
         },
         files: {
-          'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
+          'tmp/gpl.js': ['test/fixtures/gpl.js']
         }
       }
     },
@@ -52,7 +52,6 @@ module.exports = function(grunt) {
     nodeunit: {
       tests: ['test/*_test.js']
     }
-
   });
 
   // Actually load this plugin's task(s).

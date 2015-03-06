@@ -27,20 +27,20 @@ exports.licensr = {
     // setup here if necessary
     done();
   },
-  default_options: function(test) {
+  with_header: function(test) {
     test.expect(1);
 
-    var actual = grunt.file.read('tmp/default_options');
-    var expected = grunt.file.read('test/expected/default_options');
+    var actual = grunt.file.read('tmp/gpl.js');
+    var expected = grunt.file.read('test/expected/gpl.js');
     test.equal(actual, expected, 'should describe what the default behavior is.');
 
     test.done();
   },
-  custom_options: function(test) {
+  without_header: function(test) {
     test.expect(1);
 
-    var actual = grunt.file.read('tmp/custom_options');
-    var expected = grunt.file.read('test/expected/custom_options');
+    var actual = grunt.file.read('tmp/mit.js');
+    var expected = grunt.file.read('test/expected/mit.js');
     test.equal(actual, expected, 'should describe what the custom option(s) behavior is.');
 
     test.done();

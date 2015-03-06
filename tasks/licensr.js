@@ -10,37 +10,59 @@
 
 module.exports = function(grunt) {
 
-  // Please see the Grunt documentation for more information regarding task
-  // creation: http://gruntjs.com/creating-tasks
+  // @TODO use options to set user and year
+  // @TODO use settings from package.json and templating to write copyright notice
 
   grunt.registerMultiTask('licensr', 'dont care about license headers', function() {
     // Merge task-specific and/or target-specific options with these defaults.
     var options = this.options({
-      punctuation: '.',
-      separator: ', '
+      license: 'LICENSE-MIT'
     });
 
-    // Iterate over all specified file groups.
-    this.files.forEach(function(f) {
-      // Concat specified files.
-      var src = f.src.filter(function(filepath) {
-        // Warn on and remove invalid source files (if nonull was set).
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
-          return false;
-        } else {
-          return true;
+    var license = grunt.file.read(options.license);
+    license = '/*' + "\n" + license +'*/';
+
+    var removeHeader = function (contents) {
+      var buf = [];
+      var started = false;
+      var flush = false;
+      contents.split("\n").forEach(function (line) {
+        buf.push(line);
+
+        if (line.match(/\s*\/\*.*/i)) {
+          started = true;
         }
-      }).map(function(filepath) {
-        // Read file source.
-        return grunt.file.read(filepath);
-      }).join(grunt.util.normalizelf(options.separator));
+        if (line.match(/.*copyright.*/i) && started && !flush) {
+          grunt.log.warn('found copyright => removing', line);
+          flush = true;
+        }
+        if (line.match(/\s*\*\//i)) {
+          started = false;
 
-      // Handle options.
-      src += options.punctuation;
+          if (flush === true) {
+            buf = [];
+          }
+        }
 
-      // Write the destination file.
-      grunt.file.write(f.dest, src);
+      });
+
+      return buf.join("\n");
+    };
+
+    // // Iterate over all specified file groups.
+    this.files.forEach(function(f) {
+      var dest = f.dest;
+      var src = f.src;
+
+      var buf = [];
+      src.forEach(function (file) {
+        var contents = grunt.file.read(file);
+        contents = removeHeader(contents);
+        contents = license + "\n" + contents;
+        buf.push(contents);
+      });
+
+      grunt.file.write(f.dest, buf.join(''));
 
       // Print a success message.
       grunt.log.writeln('File "' + f.dest + '" created.');
