@@ -45,6 +45,19 @@ module.exports = function(grunt) {
         files: {
           'tmp/gpl.js': ['test/fixtures/gpl.js']
         }
+      },
+      topdoc: {
+        options: {
+          license: 'LICENSE-MIT',
+          comment: {
+            start: '//-',
+            end: "\n"
+          },
+          indent: 2
+        },
+        files: {
+          'tmp/topdoc.jade': ['test/fixtures/topdoc.jade']
+        }
       }
     },
 
