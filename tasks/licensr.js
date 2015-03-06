@@ -49,20 +49,18 @@ module.exports = function(grunt) {
       return buf.join("\n");
     };
 
-    // // Iterate over all specified file groups.
     this.files.forEach(function(f) {
-      var dest = f.dest;
+      var dest = f.dest || undefined;
       var src = f.src;
 
-      var buf = [];
       src.forEach(function (file) {
         var contents = grunt.file.read(file);
         contents = removeHeader(contents);
         contents = license + "\n" + contents;
-        buf.push(contents);
-      });
 
-      grunt.file.write(f.dest, buf.join(''));
+        dest = f.dest || file;
+        grunt.file.write(dest, contents);
+      });
 
       // Print a success message.
       grunt.log.writeln('File "' + f.dest + '" created.');
