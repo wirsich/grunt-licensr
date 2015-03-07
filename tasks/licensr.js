@@ -19,7 +19,11 @@ module.exports = function(grunt) {
       license: 'LICENSE-MIT',
       comment: {
         start: '/*',
-        end: '*/'
+        end: '*/',
+      },
+      matcher: {
+        start: /\s*\/\*.*/i,
+        end: /\s*\*\//i
       },
       indent: 0
     });
@@ -37,33 +41,31 @@ module.exports = function(grunt) {
       license = buf.join("\n");
     }
 
-    license = options.comment.start + "\n" + license + options.comment.end;
+    license = options.comment.start + "\n" + license + options.comment.end + "\n\n";
 
     var removeHeader = function (contents) {
       var buf = [];
       var started = false;
       var flush = false;
       contents.split("\n").forEach(function (line) {
-        buf.push(line);
-
-        if (line.match(/\s*\/\*.*/i)) {
-          started = true;
-          console.log(line, 'started');
-        }
-
-        if (line.match(/.*copyright.*/i) && started && !flush) {
-          grunt.log.warn('found copyright => removing', line);
+        if (started && line.match(/.*copyright.*/i)) {
           flush = true;
         }
 
-        if (line.match(/\s*\*\//i)) {
-          console.log(line, 'stopped');
+        if (started && line.match(options.matcher.end)) {
           started = false;
           if (flush === true) {
-            console.log('FLUSH');
+            flush = false;
             buf = [];
           }
         }
+
+        if (!started && line.match(options.matcher.start)) {
+          started = true;
+          flush   = false;
+        }
+
+        buf.push(line);
       });
 
       return buf.join("\n");

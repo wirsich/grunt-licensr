@@ -1,4 +1,55 @@
 
-#id
-  .class
-    p text
+mixin emil-table-cell(options)
+    //- Set default values
+    - options             = options          || {};
+    - options['classes']  = options.classes || '';
+    - options['size']  = options.size || 'md';
+
+    li.emil-table-cell(data-id=options.dataID, class='#{options.classes} #{options.size}')
+        block
+
+mixin emil-table-cell-nav(options)
+    //- Set default values
+    - options             = options          || {};
+    - options['classes'] = options.classes || '';
+    - options['target'] = options.target || '';
+    - options['hidden'] = options.hidden ? '' : 'open'; // TODO: For what is this ? :D
+    - options['dataId'] = options.dataId  || '';
+    - options['size']  = options.size || 'md';
+
+    li.emil-table-cell-nav(class='#{options.classes} #{options.size} #{options.hidden}', data-target=options.target, data-id=options.dataId)
+        block
+
+mixin emil-table-cell-section-header
+    li.emil-table-cell-section-header
+        block
+
+mixin emil-table-cell-nav-section-header
+    li.emil-table-cell-nav-section-header
+        block
+
+mixin emil-table-cell-search
+    //- Set default values
+    - options             = options          || {};
+    - options['classes']  = options.classes || '';
+
+    li.emil-table-cell-search(class=options.classes)
+        block
+
+mixin emil-table-cell-icon-container(options)
+    //- Set default values
+    - options             = options          || {};
+    - options['classes']  = options.classes  || '';
+    - options['side']     = options.side      || 'left';
+
+    .emil-icon-container(class='#{options.classes} #{options.side}')
+        block
+
+
+mixin emil-table-cell-container(options)
+    //- Set default values
+    - options             = options          || {};
+    - options['classes']  = options.classes  || '';
+    - options['side']     = options.side      || 'left';
+    div(class='#{options.classes} emil-table-cell-#{options.side} ')
+        block
