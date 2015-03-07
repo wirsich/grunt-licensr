@@ -49,15 +49,7 @@ module.exports = function(grunt) {
       topdoc: {
         options: {
           license: 'LICENSE-MIT',
-          comment: {
-            start: '//-',
-            end: ''
-          },
-          indent: 4,
-          matcher: {
-            start: /^\/\/-.*/,
-            end: /^(\w|[#-\./])/i
-          }
+          topdoc: true
         },
         files: {
           'tmp/topdoc.jade': ['test/fixtures/topdoc.jade']

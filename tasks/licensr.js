@@ -10,13 +10,28 @@
 
 module.exports = function(grunt) {
 
+  // @TODO option for overwrite (copyright header)
   // @TODO use options to set user and year
   // @TODO use settings from package.json and templating to write copyright notice
 
   grunt.registerMultiTask('licensr', 'dont care about license headers', function() {
     // Merge task-specific and/or target-specific options with these defaults.
+
+    var __topdoc = {
+      comment: {
+        start: '//-',
+        end: ''
+      },
+      indent: 4,
+      matcher: {
+        start: /^\/\/-.*/,
+        end: /^(\w|[#-\./])/i
+      }
+    };
+
     var options = this.options({
       license: 'LICENSE-MIT',
+      topdoc: false,
       comment: {
         start: '/*',
         end: '*/',
@@ -27,6 +42,10 @@ module.exports = function(grunt) {
       },
       indent: 0
     });
+
+    if (options.topdoc === true) {
+      options = this.options(__topdoc);
+    }
 
     var str_repeat = function (n, chr) {
       return new Array(n + 1).join(chr);
@@ -41,8 +60,9 @@ module.exports = function(grunt) {
       license = buf.join("\n");
     }
 
-    license = options.comment.start + "\n" + license + options.comment.end + "\n\n";
+    license = options.comment.start + "\n" + license + "\n" + options.comment.end;
 
+    var removed = false;
     var removeHeader = function (contents) {
       var buf = [];
       var started = false;
@@ -55,17 +75,23 @@ module.exports = function(grunt) {
         if (started && line.match(options.matcher.end)) {
           started = false;
           if (flush === true) {
+            removed = true;
             flush = false;
             buf = [];
+            if (options.topdoc === true) {
+              buf.push(line);
+            }
+          } else {
+            buf.push(line);
           }
+        } else {
+          buf.push(line);
         }
 
         if (!started && line.match(options.matcher.start)) {
           started = true;
           flush   = false;
         }
-
-        buf.push(line);
       });
 
       return buf.join("\n");
@@ -87,13 +113,13 @@ module.exports = function(grunt) {
         else {
           dest = file;
           grunt.file.write(dest, contents);
-          grunt.log.writeln('File "' + dest + '" created.');
+          grunt.log.writeln('File "' + dest + '" modified.');
         }
       });
 
       if (f.dest) {
         grunt.file.write(dest, buf.join(''));
-        grunt.log.writeln('File "' + dest + '" created.');
+        grunt.log.writeln('File "' + dest + '" modified.');
       }
     });
   });
