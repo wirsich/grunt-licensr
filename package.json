@@ -1,7 +1,7 @@
 {
   "name": "grunt-licensr",
   "description": "dont care about license headers",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "homepage": "https://github.com/wirsich/grunt-licensr",
   "author": {
     "name": "Stephan Wirsich",
